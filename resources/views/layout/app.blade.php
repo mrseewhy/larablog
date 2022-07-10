@@ -55,17 +55,24 @@
         <a class="nav-link" href="/about">About</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/contact">Contact</a>
+        <a class="nav-link" href="{{url('/contact')}}">Contact</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/posts">Posts</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{route('posts.create')}}">Create Posts</a>
       </li>
     </ul>
     
   </div>
 </div>
 </nav>
-
+<p style="margin-top: 50px">@if(session()->has('message'))
+    <div class="alert alert-success">
+        {{ session()->get('message') }}
+    </div> </p>
+@endif
 @yield('content')
 
 <footer class="container">

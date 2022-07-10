@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 
 class PostsController extends Controller
@@ -39,6 +40,18 @@ class PostsController extends Controller
     public function store(Request $request)
     {
         //
+        $validated = $request->validate([
+            'title' => 'required|min:5|unique:posts|max:255',
+            'body' => 'required|min:20',
+        ]);
+
+        $post = new Post();
+        $post->title = $request->title;
+        $post->body = $request->body;
+        $post->save();
+        $request->session()->flash('message', "Post created"); 
+        return redirect("/posts/$post->id");
+
     }
 
     /**
@@ -63,6 +76,8 @@ class PostsController extends Controller
     public function edit($id)
     {
         //
+        $post = Post::findorFail($id);
+        return view('dashboard.edit', ['post' => $post]);
     }
 
     /**
@@ -75,6 +90,17 @@ class PostsController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $validated = $request->validate([
+            'title' => 'required|min:5|max:255',
+            'body' => 'required|min:20',
+        ]);
+
+        $post = Post::findorFail($id);
+        $post->title = $request->title;
+        $post->body = $request->body;
+        $post->save();
+        $request->session()->flash('message', "Post editted"); 
+        return redirect("/posts/$post->id");
     }
 
     /**
@@ -86,5 +112,8 @@ class PostsController extends Controller
     public function destroy($id)
     {
         //
+        $post = Post::findorFail($id);
+        $post->delete();
+        return redirect(route('posts.index'));
     }
 }
